@@ -1,5 +1,5 @@
 """
-Points relating to single arbitary user.
+API endpoints relating to single arbitary user.
 """
 
 from flask import request, jsonify
@@ -9,18 +9,6 @@ from data.user import User
 
 from __main__ import app
 
-"""
-Adds points to user's balance. 
-
-POST /add
-
-Request Body:
-{
-  payer: string,
-  points: int,
-  timstamp: datetime
-}
-"""
 # main user
 user = User()
 
@@ -134,6 +122,20 @@ def spend():
         )
 
     return jsonify(payers), 200
+
+
+"""
+Adds points to user's balance. 
+
+POST /add
+
+Request Body:
+{
+  payer: string,
+  points: int,
+  timstamp: datetime
+}
+"""
 
 
 @app.route("/balance", methods=["GET"])

@@ -1,7 +1,9 @@
 """
 User model for maintaing information about user. This information includes:
-- points_balance
-- points_history
+- points_balance (int)
+- points_history (heap)
+- points_mapping (dict): payer, total
+- debt (dict): payer, (balance, timestamp)
 """
 
 import heapq
@@ -12,9 +14,10 @@ from datetime import datetime
 class User:
     def __init__(self):
         self.points_balance = 0
+
         # this should be a minHeap that is ordered by the timestamp
         self.points_history = []
-        self.points_mapping = defaultdict(int)
+        self.points_mapping = defaultdict(int)  # payer, total
         self.debt = {}  # payer, (int, timestamp)
 
     """
