@@ -236,6 +236,60 @@ def test_same_payer_but_with_break():
     )
 
 
+def test_space_debt():
+    user = User()
+
+    user.add_points("DANNON", 500, str_to_datetime("2022-10-31T10:00:00Z"))
+    user.add_points("UNILEVER", 200, str_to_datetime("2022-10-31T11:00:00Z"))
+    user.add_points("DANNON", -300, str_to_datetime("2022-10-31T15:00:00Z"))
+    user.add_points("DANNON", 150, str_to_datetime("2022-10-31T15:00:00Z"))
+    user.add_points("UNILEVER", 200, str_to_datetime("2022-11-02T11:00:00Z"))
+    user.add_points("DANNON", -50, str_to_datetime("2022-11-02T15:00:00Z"))
+
+    # 200, 200
+    # 100, 200
+    # ---------
+    # 300, 400
+
+    compare_defaultdict_with_dict(
+        user.spend_points(450),
+        {
+            "UNILEVER": -200,
+            "DANNON": -250,
+        },
+    )
+
+    verify_points(user, 250, [("DANNON", 50), ("UNILEVER", 200)])
+
+
+def test_add_after_points_already_used_by_customer():
+    user = User()
+
+    user.add_points("DANNON", 500, str_to_datetime("2022-10-31T10:00:00Z"))  # *
+    user.add_points("UNILEVER", 200, str_to_datetime("2022-10-31T11:00:00Z"))
+    user.add_points("DANNON", -300, str_to_datetime("2022-10-31T15:00:00Z"))
+
+    compare_defaultdict_with_dict(
+        user.spend_points(200),
+        {"DANNON": -200},
+    )
+
+    user.add_points("DANNON", 150, str_to_datetime("2022-10-31T15:00:00Z"))
+    user.add_points("UNILEVER", 200, str_to_datetime("2022-11-02T11:00:00Z"))
+
+    user.add_points(
+        "DANNON", -50, str_to_datetime("2022-10-31T10:30:00Z")
+    )  # insert in between the "*" (this amount should be ignored)
+
+    compare_defaultdict_with_dict(
+        user.spend_points(200),
+        {
+            "UNILEVER": -50,
+            "DANNON": -150,
+        },
+    )
+
+
 def test_final_boss():
     user = User()
 
@@ -245,7 +299,14 @@ def test_final_boss():
     user.add_points("MILLER COORS", 10000, str_to_datetime("2022-11-01T14:00:00Z"))
     user.add_points("DANNON", 1000, str_to_datetime("2022-11-02T14:00:00Z"))
 
-    user.spend_points(5000)
+    compare_defaultdict_with_dict(
+        user.spend_points(5000),
+        {
+            "UNILEVER": -200,
+            "DANNON": -100,
+            "MILLER COORS": -4700,
+        },
+    )
 
     verify_points(user, 6300, [("MILLER COORS", 5300), ("DANNON", 1000)])
 

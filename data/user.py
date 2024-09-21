@@ -6,6 +6,11 @@ User model for maintaing information about user. This information includes:
 - debt (dict): payer, (balance, timestamp)
 """
 
+"""
+Comments:
+- The way I handle negative points 
+"""
+
 import heapq
 from collections import defaultdict
 from datetime import datetime
@@ -18,7 +23,7 @@ class User:
         # this should be a minHeap that is ordered by the timestamp
         self.points_history = []
         self.points_mapping = defaultdict(int)  # payer, total
-        self.debt = {}  # payer, (int, timestamp)
+        self.debt = defaultdict(list)  # payer, [(int, timestamp)]
 
     """
     Adds points to the user's balance and records the transaction in the history.
@@ -41,20 +46,19 @@ class User:
         if points > 0:
             heapq.heappush(self.points_history, (timestamp, payer, points))
         else:
-            self.debt[payer] = (
-                self.debt.get(payer, (0, 0))[0] + abs(points),
-                timestamp,
-            )
+            heapq.heappush(self.debt[payer], (timestamp, abs(points)))
 
         self.points_balance += points
         self.points_mapping[payer] += points
 
-        # update the amount
         return self.points_balance
 
     """
     Spends points from the user's balance and get a list of payers to charge. 
     Payers of users oldest points (determined by timestamp) will be used first.
+
+    If a user has some kind of debt of points, but they already spent points before the debt was added to their account, just ignored the
+    debt amount. Don't think we would be asking user for points back.
 
     Args:
         points (int): The number of points to be spent.
@@ -62,7 +66,7 @@ class User:
         ValueError: If the user does not have enough points to spend.
     Returns:
         defaultdict: The payers (key) and amount of points subtracted from payers (value). Amount
-              is negative or 0.
+                     is negative or 0.
     """
 
     def spend_points(self, points):
@@ -74,20 +78,16 @@ class User:
         while points > 0:
             timestamp, payer, amount = heapq.heappop(self.points_history)
 
-            if (
-                payer in self.debt
-                and self.debt[payer][0] > 0
-                and self.debt[payer][1] > timestamp
-            ):  # there is a debt
-                amount -= self.debt[payer][0]
-
-                if amount > 0:
-                    del self.debt[payer]
-                else:
-                    self.debt[payer] = (
-                        amount,
-                        self.debt[payer][1],
-                    )  # clear the debt
+            # check if we removed points in the future and update the actual amount of points we have at this transaction
+            while payer in self.debt and self.debt[payer] and amount >= 0:
+                # debt timestamp is before any of the new transactions current; must mean the user already spent the points and there are no
+                # points to actually use to account for the debt after this point remove the debt because the customer is always right
+                # i.e. 200 (D, 1) -> 200 (5) -> spend 200 (6) -> -50 (D, 2), there would be no points to take 50 from; just forget about the debt
+                debt_timestamp, debt_amt = heapq.heappop(self.debt[payer])
+                if debt_timestamp > timestamp:
+                    amount -= debt_amt
+                    if amount < 0:  # user still owes points
+                        heapq.heappush(self.debt[payer], (debt_timestamp, abs(amount)))
 
             if amount <= 0:
                 continue
@@ -113,6 +113,13 @@ class User:
 
     def get_total_balance(self):
         return self.points_balance
+
+    """
+    Gets the amount of points from each payer
+
+    Returns:
+        dict: The current distributions of points from each payer for this user.
+    """
 
     def get_points_mapping(self):
         return self.points_mapping

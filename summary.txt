@@ -19,14 +19,14 @@ be stored (data located in instantiation of "User" class) is:
 
 Let n = number of transactions
 - add_points : O(log(n)) 
-- spend_points : O(points * log(n))
+- spend_points : O(n * log(n))
 - get_total_balance : O(1)
 - get_points_mapping : O(1)
 
 Lastly, my solution is tested for edge cases and any exceptions that may be raised.
 
-A disadvantage of my solution is that it uses up quite a bit of space. It has a space complexity of O(n). However, I think that this is a good 
-tradeoff since I have improved the time complexity from a native solution of O(points * n) to at most a O(points * log(n)).
+A disadvantage of my solution is that it uses up quite a bit of space. It has a space complexity of O(payers * n). However, I think that this is a good 
+tradeoff since I have improved the time complexity of spend_points from a native solution of O(n^2) to at most a O(n * log(n)).
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
