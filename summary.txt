@@ -1,0 +1,59 @@
+1. Why did you choose the tools, libraries, and language you used for the coding exercise?
+
+(There are multiple dependencies that are in the requirements.txt file, but here are the main libaries/tools I used)
+
+I choose the Flask library as the backend framework for this exercise, and I used Python with it. I choose these technologies
+because I was looking for a quick and familar way to develop a solution to this exercise.
+
+In order to do unit testing for this API, I used PyTest (you can run all tests using "pytest").  As a way to do end-to-end testing for the API, I used
+Postman. 
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+2. What are the advantages and disadvantages of your solution?
+One advantage of my solution is that everything is separated into different folders and severe very specific purposes. I wanted to maintain a clean
+and long-term solution for other software engineers. 
+
+Another advantage of my solution is that it is very fast. The time complexity of each of the following methods to modify the data that needs to 
+be stored (data located in instantiation of "User" class) is:
+
+Let n = number of transactions
+- add_points : O(log(n)) 
+- spend_points : O(points * log(n))
+- get_total_balance : O(1)
+- get_points_mapping : O(1)
+
+Lastly, my solution is tested for edge cases and any exceptions that may be raised.
+
+A disadvantage of my solution is that it uses up quite a bit of space. It has a space complexity of O(n). However, I think that this is a good 
+tradeoff since I have improved the time complexity from a native solution of O(n) to at most a O(points * log(n)).
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+3. What has been a favorite school/personal project thus far? What about it that challenged you?
+
+It's not exactly a personal or school project, but it's the software I built at my previous internship (Suffolk Construction). It was analytics software 
+for specifically helping construction manager keep track of the progress of a building's steel infastructure. I was actually the lead engineer 
+behind it with my manager teaching me about the construction industry and why this software is useful. 
+
+This was the specific tech stack I used:
+- Frontend development with Vue.JS, TypeScript, TailwindCSS
+- Backend development Express.JS, TypeScript, PostgreSQL, Redis
+- Cloud computing and hosting with AWS and Digital Ocean
+- Machine learning with PyTorch, Scikit-Learn, Python
+- Data analysis (Python)
+
+I wanted to gain more technical skills through this project, so I wanted to pick some technolgies I've never used before. So, the main technical 
+challenges fell onto learning and researching a new technology and weighting it's pros and cons on including it in the codebase. To help me overcome
+these challenges, I researched topics on Google and YouTube, I read over my old school notes (linear algebra), I used generative AI to explain 
+concepts to me. I used whatever resource I had at my disposal in order to make sure that my software was something I would love to show anyone.
+
+Beyond technical challenges, there were interpersonal challenges. Since I was the only person working on this project, I needed to collect user
+feedback and filter through all that feedback. Like any other intern at the company, I needed to work with subcontractors, particularly, related to
+the scanned documents they were feeding into my AI.
+
+These challenges fed into my passionate in applying computer science to real world scenarios and gave me exposure to industries that I didn't think
+needed a computer scientist. 
+
+
+
