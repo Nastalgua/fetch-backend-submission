@@ -26,7 +26,7 @@ Let n = number of transactions
 Lastly, my solution is tested for edge cases and any exceptions that may be raised.
 
 A disadvantage of my solution is that it uses up quite a bit of space. It has a space complexity of O(n). However, I think that this is a good 
-tradeoff since I have improved the time complexity from a native solution of O(n) to at most a O(points * log(n)).
+tradeoff since I have improved the time complexity from a native solution of O(points * n) to at most a O(points * log(n)).
 
 -----------------------------------------------------------------------------------------------------------------------------------------
 
